@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FractalPainter", "FractalPa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudContainer", "TagsCloudContainer\TagsCloudContainer.csproj", "{F6BDA640-F531-416D-9B3B-095D4A0149A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudConsole", "TagsCloudConsole\TagsCloudConsole.csproj", "{C66EB157-A8E6-46FA-BA1D-B76E62D2210C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RectangleCloudlayouterTests", "RectangleCloudlayouterTests\RectangleCloudlayouterTests.csproj", "{B7E1B9A2-1929-4EAC-9A6D-6F7F38B76A99}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{F6BDA640-F531-416D-9B3B-095D4A0149A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6BDA640-F531-416D-9B3B-095D4A0149A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6BDA640-F531-416D-9B3B-095D4A0149A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C66EB157-A8E6-46FA-BA1D-B76E62D2210C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C66EB157-A8E6-46FA-BA1D-B76E62D2210C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C66EB157-A8E6-46FA-BA1D-B76E62D2210C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C66EB157-A8E6-46FA-BA1D-B76E62D2210C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7E1B9A2-1929-4EAC-9A6D-6F7F38B76A99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7E1B9A2-1929-4EAC-9A6D-6F7F38B76A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7E1B9A2-1929-4EAC-9A6D-6F7F38B76A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7E1B9A2-1929-4EAC-9A6D-6F7F38B76A99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

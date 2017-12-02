@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F6BDA640-F531-416D-9B3B-095D4A0149A0}</ProjectGuid>
+    <ProjectGuid>{C66EB157-A8E6-46FA-BA1D-B76E62D2210C}</ProjectGuid>
     <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TagsCloudContainer</RootNamespace>
-    <AssemblyName>TagsCloudContainer</AssemblyName>
+    <RootNamespace>TagsCloudConsole</RootNamespace>
+    <AssemblyName>TagsCloudConsole</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -33,47 +33,40 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.6.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da">
+      <HintPath>..\packages\Autofac.4.6.2\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandLine, Version=1.9.71.2, Culture=neutral, PublicKeyToken=de6f01bd326f8c32">
+      <HintPath>..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CloudCreator.cs" />
-    <Compile Include="CloudDrawers\BitmapStringCloudDrawer.cs" />
-    <Compile Include="CloudDrawers\BitmapRectangleCloudDrawer.cs" />
-    <Compile Include="CloudDrawers\ICloudDrawer.cs" />
-    <Compile Include="CloudDrawers\Stylers\ICloudObjectsStyler.cs" />
-    <Compile Include="CloudDrawers\Stylers\StringsStyler.cs" />
-    <Compile Include="CloudDrawers\Stylers\Style.cs" />
-    <Compile Include="CloudObjectsContainers\CloudObjectsDictionary.cs" />
-    <Compile Include="CloudObjectsContainers\ICloudObjectContainer.cs" />
-    <Compile Include="CloudObjects\BasicCloudObjectFabric.cs" />
-    <Compile Include="CloudObjects\ICloudObjectFabric.cs" />
-    <Compile Include="ICloudCreator.cs" />
-    <Compile Include="ValuesPreprocessors\BoringWordsStringsPreprocessor.cs" />
-    <Compile Include="ValuesPreprocessors\IValuesPreprocessor.cs" />
-    <Compile Include="ValuesPreprocessors\StringLengthPreprocessor.cs" />
-    <Compile Include="ValuesPreprocessors\ToLowerStringsPreprocessor.cs" />
-    <Compile Include="ValuesSources\AbstractFileStringsSource.cs" />
-    <Compile Include="ValuesSources\IValuesSource.cs" />
-    <Compile Include="ValuesSources\TxtStringsSource.cs" />
-    <Compile Include="CloudObjects\ICloudObject.cs" />
-    <Compile Include="CloudObjects\BasicCloudObject.cs" />
+    <Compile Include="CommandLineOptions.cs" />
+    <Compile Include="Options\CloudOptions.cs" />
+    <Compile Include="Options\InputFormat.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RectanglesLayouters\SpiralRectanglesLayouter.cs" />
-    <Compile Include="RectanglesLayouters\DrawingExtensions.cs" />
-    <Compile Include="RectanglesLayouters\IRectanglesLayouter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TagsCloudContainer\TagsCloudContainer.csproj">
+      <Project>{F6BDA640-F531-416D-9B3B-095D4A0149A0}</Project>
+      <Name>TagsCloudContainer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="sample.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

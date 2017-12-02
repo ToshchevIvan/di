@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F6BDA640-F531-416D-9B3B-095D4A0149A0}</ProjectGuid>
+    <ProjectGuid>{B7E1B9A2-1929-4EAC-9A6D-6F7F38B76A99}</ProjectGuid>
     <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TagsCloudContainer</RootNamespace>
-    <AssemblyName>TagsCloudContainer</AssemblyName>
+    <RootNamespace>RectangleCloudlayouterTests</RootNamespace>
+    <AssemblyName>RectangleCloudlayouterTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -33,44 +33,37 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentAssertions, Version=4.15.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a">
+      <HintPath>..\packages\FluentAssertions.4.15.0\lib\net45\FluentAssertions.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentAssertions, Version=4.19.4.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a">
+      <HintPath>..\packages\FluentAssertions.4.19.4\lib\net45\FluentAssertions.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentAssertions.Core, Version=4.19.4.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a">
+      <HintPath>..\packages\FluentAssertions.4.19.4\lib\net45\FluentAssertions.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
+    <Reference Include="nunit.framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
+      <HintPath>..\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CloudCreator.cs" />
-    <Compile Include="CloudDrawers\BitmapStringCloudDrawer.cs" />
-    <Compile Include="CloudDrawers\BitmapRectangleCloudDrawer.cs" />
-    <Compile Include="CloudDrawers\ICloudDrawer.cs" />
-    <Compile Include="CloudDrawers\Stylers\ICloudObjectsStyler.cs" />
-    <Compile Include="CloudDrawers\Stylers\StringsStyler.cs" />
-    <Compile Include="CloudDrawers\Stylers\Style.cs" />
-    <Compile Include="CloudObjectsContainers\CloudObjectsDictionary.cs" />
-    <Compile Include="CloudObjectsContainers\ICloudObjectContainer.cs" />
-    <Compile Include="CloudObjects\BasicCloudObjectFabric.cs" />
-    <Compile Include="CloudObjects\ICloudObjectFabric.cs" />
-    <Compile Include="ICloudCreator.cs" />
-    <Compile Include="ValuesPreprocessors\BoringWordsStringsPreprocessor.cs" />
-    <Compile Include="ValuesPreprocessors\IValuesPreprocessor.cs" />
-    <Compile Include="ValuesPreprocessors\StringLengthPreprocessor.cs" />
-    <Compile Include="ValuesPreprocessors\ToLowerStringsPreprocessor.cs" />
-    <Compile Include="ValuesSources\AbstractFileStringsSource.cs" />
-    <Compile Include="ValuesSources\IValuesSource.cs" />
-    <Compile Include="ValuesSources\TxtStringsSource.cs" />
-    <Compile Include="CloudObjects\ICloudObject.cs" />
-    <Compile Include="CloudObjects\BasicCloudObject.cs" />
+    <Compile Include="DrawingExtensionsTests.cs" />
+    <Compile Include="ExampleLayoutGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RectanglesLayouters\SpiralRectanglesLayouter.cs" />
-    <Compile Include="RectanglesLayouters\DrawingExtensions.cs" />
-    <Compile Include="RectanglesLayouters\IRectanglesLayouter.cs" />
+    <Compile Include="RandomEntitiesFabric.cs" />
+    <Compile Include="TagsCloudVisualizationTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TagsCloudContainer\TagsCloudContainer.csproj">
+      <Project>{F6BDA640-F531-416D-9B3B-095D4A0149A0}</Project>
+      <Name>TagsCloudContainer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
