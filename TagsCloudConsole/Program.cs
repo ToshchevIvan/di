@@ -81,6 +81,7 @@ namespace TagsCloudConsole
             // Не может забиндить словарь. Не пойму, почему, есть же пустой конструктор
 //            builder.RegisterGeneric(typeof(Dictionary<,>))
 //                .As(typeof(IDictionary<,>));
+			//TODO RV(atolstov): а зачем ты биндишь Dictionary на IDictionary? Где-то тебе важно абатрагироваться от устройства Dictionary?
             builder.Register(c => new Dictionary<string, ICloudObject<string>>())
                 .As<IDictionary<string, ICloudObject<string>>>();
             builder.RegisterGeneric(typeof(CloudObjectsDictionary<>))
