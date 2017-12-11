@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Autofac;
 using CommandLine;
@@ -36,14 +39,16 @@ namespace TagsCloudConsole
             {
                 Color.CornflowerBlue, Color.BlueViolet, Color.IndianRed, Color.OliveDrab, Color.CadetBlue
             };
+            
             string[] stopWords;
             stopWords = cmdOptions.StopWordsFile != null ? 
                 File.ReadAllLines(cmdOptions.StopWordsFile) : new string[0];    
+            
             var options = new CloudOptions(
                 cmdOptions.InputFile,
                 cmdOptions.OutputFile,
                 cmdOptions.InputFormat,
-                cmdOptions.OutputFormat,
+                GetImageFormat(cmdOptions.OutputFormat),
                 center,
                 canvasSize,
                 defaultColorPalette,
@@ -120,6 +125,14 @@ namespace TagsCloudConsole
                 .As<IRenderer<Bitmap>>();
 
             return builder.Build();
+        }
+        
+        private static ImageFormat GetImageFormat(OutputFormat format)
+        {
+            const BindingFlags flags = BindingFlags.GetProperty;
+            var type = typeof(ImageFormat);
+            var o = type.InvokeMember(format.ToString(), flags, null, type, null);
+            return (ImageFormat)o;
         }
     }
 }

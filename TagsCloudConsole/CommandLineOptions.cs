@@ -18,9 +18,8 @@ namespace TagsCloudConsole
         [Option("input-format", HelpText = "Must be one of the following: Txt.")]
         public InputFormat InputFormat { get; set; } = InputFormat.Txt;
 
-        // Кажется, не понимает значения enum, вываливает справку. Хотя enum строчкой выше работает :\
-        [Option("output-format", HelpText = "Must have one of the ImageFormat enum values.")]
-        public ImageFormat OutputFormat { get; set; } = ImageFormat.Png;
+        [Option("output-format", HelpText = "Must have one of the OutputFormat enum values.")]
+        public OutputFormat OutputFormat { get; set; } = OutputFormat.Bmp;
 
         [Option("max-count", DefaultValue = 100, HelpText = "The maximum number of words in cloud.")]
         public int MaxCount { get; set; }

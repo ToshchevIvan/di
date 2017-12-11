@@ -54,6 +54,7 @@
     <Compile Include="CommandLineOptions.cs" />
     <Compile Include="Options\CloudOptions.cs" />
     <Compile Include="Options\InputFormat.cs" />
+    <Compile Include="Options\OutputFormat.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
