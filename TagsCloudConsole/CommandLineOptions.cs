@@ -25,6 +25,9 @@ namespace TagsCloudConsole
         [Option("max-count", DefaultValue = 100, HelpText = "The maximum number of words in cloud.")]
         public int MaxCount { get; set; }
         
+        [Option("max-weight", DefaultValue = 150, HelpText = "The maximum weight of word in cloud.")]
+        public int MaxWeight { get; set; }
+        
         [OptionArray('c', "center", DefaultValue = new[] {1500, 1500}, HelpText = "The center (pair of ints) of cloud.")]
         public int[] Center { get; set; }
         
@@ -40,6 +43,9 @@ namespace TagsCloudConsole
         
         [Option('f', "font-family", HelpText = "Must have one of the FontFamily enum values.")]
         public FontFamily FontFamily { get; set; } = FontFamily.GenericSansSerif;
+        
+        [Option("stop-words-file", DefaultValue = null, HelpText = "Txt file with words that should be excluded.")]
+        public string StopWordsFile { get; set; }
         
         [HelpOption]
         public string GetUsage()

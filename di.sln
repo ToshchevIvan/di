@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudContainer", "TagsC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudConsole", "TagsCloudConsole\TagsCloudConsole.csproj", "{C66EB157-A8E6-46FA-BA1D-B76E62D2210C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RectangleCloudlayouterTests", "RectangleCloudlayouterTests\RectangleCloudlayouterTests.csproj", "{B7E1B9A2-1929-4EAC-9A6D-6F7F38B76A99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagsCloudTests", "TagsCloudTests\TagsCloudTests.csproj", "{B7E1B9A2-1929-4EAC-9A6D-6F7F38B76A99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

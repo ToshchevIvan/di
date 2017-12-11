@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NHunspell, Version=1.2.5554.16953, Culture=neutral, PublicKeyToken=1ac793ea843b4366">
+      <HintPath>..\packages\NHunspell.1.2.5554.16953\lib\net\NHunspell.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -46,33 +49,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CloudCreator.cs" />
-    <Compile Include="CloudDrawers\BitmapStringCloudDrawer.cs" />
-    <Compile Include="CloudDrawers\BitmapRectangleCloudDrawer.cs" />
-    <Compile Include="CloudDrawers\ICloudDrawer.cs" />
-    <Compile Include="CloudDrawers\Stylers\ICloudObjectsStyler.cs" />
-    <Compile Include="CloudDrawers\Stylers\StringsStyler.cs" />
-    <Compile Include="CloudDrawers\Stylers\Style.cs" />
-    <Compile Include="CloudObjectsContainers\CloudObjectsDictionary.cs" />
-    <Compile Include="CloudObjectsContainers\ICloudObjectContainer.cs" />
-    <Compile Include="CloudObjects\BasicCloudObjectFabric.cs" />
-    <Compile Include="CloudObjects\ICloudObjectFabric.cs" />
-    <Compile Include="ICloudCreator.cs" />
-    <Compile Include="ValuesPreprocessors\BoringWordsStringsPreprocessor.cs" />
-    <Compile Include="ValuesPreprocessors\IValuesPreprocessor.cs" />
-    <Compile Include="ValuesPreprocessors\StringLengthPreprocessor.cs" />
-    <Compile Include="ValuesPreprocessors\ToLowerStringsPreprocessor.cs" />
-    <Compile Include="ValuesSources\AbstractFileStringsSource.cs" />
-    <Compile Include="ValuesSources\IValuesSource.cs" />
-    <Compile Include="ValuesSources\TxtStringsSource.cs" />
-    <Compile Include="CloudObjects\ICloudObject.cs" />
-    <Compile Include="CloudObjects\BasicCloudObject.cs" />
+    <Compile Include="Normalizers\WordStemNormalizer.cs" />
+    <Compile Include="Renderers\BitmapRenderer.cs" />
+    <Compile Include="Renderers\IRenderer.cs" />
+    <Compile Include="CloudObjects\BasicTagFactory.cs" />
+    <Compile Include="CloudObjects\ITagFactory.cs" />
+    <Compile Include="Filters\ParametrizedFilter.cs" />
+    <Compile Include="Filters\StopWordsFilter.cs" />
+    <Compile Include="Filters\IFilter.cs" />
+    <Compile Include="Filters\StringLengthFilter.cs" />
+    <Compile Include="Normalizers\INormalizer.cs" />
+    <Compile Include="Normalizers\ToLowerStringsNormalizer.cs" />
+    <Compile Include="Statisticians\IStatistician.cs" />
+    <Compile Include="Statisticians\StringCountStatistic.cs" />
+    <Compile Include="StringsReaders\AbstractFileStringsReader.cs" />
+    <Compile Include="StringsReaders\IStringsReader.cs" />
+    <Compile Include="StringsReaders\TxtStringsReader.cs" />
+    <Compile Include="CloudObjects\ITag.cs" />
+    <Compile Include="CloudObjects\BasicTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RectanglesLayouters\SpiralRectanglesLayouter.cs" />
-    <Compile Include="RectanglesLayouters\DrawingExtensions.cs" />
-    <Compile Include="RectanglesLayouters\IRectanglesLayouter.cs" />
+    <Compile Include="Layouters\SpiralLayouter.cs" />
+    <Compile Include="Layouters\DrawingExtensions.cs" />
+    <Compile Include="Layouters\ILayouter.cs" />
+    <Compile Include="Stylers\IStyler.cs" />
+    <Compile Include="Stylers\StringsStyler.cs" />
+    <Compile Include="Stylers\Style.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Hunspellx64.dll" />
+    <None Include="Hunspellx86.dll" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

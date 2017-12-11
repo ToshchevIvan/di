@@ -1,17 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Text;
 using Autofac;
 using CommandLine;
+using NHunspell;
 using TagsCloudConsole.Options;
-using TagsCloudContainer;
-using TagsCloudContainer.CloudDrawers;
-using TagsCloudContainer.CloudDrawers.Stylers;
 using TagsCloudContainer.CloudObjects;
-using TagsCloudContainer.CloudObjectsContainers;
-using TagsCloudContainer.RectanglesLayouters;
-using TagsCloudContainer.ValuesPreprocessors;
-using TagsCloudContainer.ValuesSources;
+using TagsCloudContainer.Filters;
+using TagsCloudContainer.Layouters;
+using TagsCloudContainer.Normalizers;
+using TagsCloudContainer.Renderers;
+using TagsCloudContainer.Statisticians;
+using TagsCloudContainer.StringsReaders;
+using TagsCloudContainer.Stylers;
 
 
 namespace TagsCloudConsole
@@ -28,13 +31,14 @@ namespace TagsCloudConsole
                 canvasSize = new Size((int) cmdOptions.CanvasSide, (int) cmdOptions.CanvasSide);
             else
                 canvasSize = new Size(cmdOptions.CanvasSize[0], cmdOptions.CanvasSize[1]);
-            // Не умеет читать Point
             var center = new Point(cmdOptions.Center[0], cmdOptions.Center[1]);
-            // Как задавать список цветов через консоль по-человечески? Проблема.
             var defaultColorPalette = new[]
             {
                 Color.CornflowerBlue, Color.BlueViolet, Color.IndianRed, Color.OliveDrab, Color.CadetBlue
             };
+            string[] stopWords;
+            stopWords = cmdOptions.StopWordsFile != null ? 
+                File.ReadAllLines(cmdOptions.StopWordsFile) : new string[0];    
             var options = new CloudOptions(
                 cmdOptions.InputFile,
                 cmdOptions.OutputFile,
@@ -45,103 +49,77 @@ namespace TagsCloudConsole
                 defaultColorPalette,
                 cmdOptions.FontSize,
                 cmdOptions.FontFamily,
-                cmdOptions.MaxCount
+                cmdOptions.MaxCount,
+                cmdOptions.MaxWeight,
+                stopWords
             );
-            var creator = GetCloudCreator(options);
-            RunProgram(creator, options);
+            var di = GetDiContainer(options);
+            RunProgram(di, options);
         }
 
-        public static void RunProgram(ICloudCreator<string> creator, CloudOptions options)
+        private static void RunProgram(IContainer di, CloudOptions options)
         {
-            using (creator)
-            {
-                creator.ReadData()
-                    .DrawCloud()
-                    .SaveToFile(options.OutputFile, options.OutputFormat);
-            }
+            var strings = di.Resolve<IStringsReader>().ReadStrings();
+            var normalized = di.Resolve<IEnumerable<INormalizer>>()
+                .Aggregate(strings, (current, normalizer) => normalizer.Normalize(current));
+            var filtered = di.Resolve<IEnumerable<IFilter>>()
+                .Aggregate(normalized, (current, filter) => filter.Filter(current));
+            IDictionary<string, int> statistics = di.Resolve<IStatistician>()
+                .GetStatistic(filtered)
+                .OrderByDescending(x => x.Value)
+                .Take(options.MaxCount)
+                .ToDictionary(x => x.Key, x => x.Value);
+            var styled = di.Resolve<IStyler>()
+                .GetStyles(statistics);
+            var layout = di.Resolve<ILayouter>()
+                .GetLayout(styled);
+            Bitmap bitmap;
+            using (var renderer = di.Resolve<IRenderer<Bitmap>>())
+                bitmap = renderer.Render(layout);
+            bitmap.Save(options.OutputFile, options.OutputFormat);
         }
 
-        public static ICloudCreator<string> GetCloudCreator(CloudOptions options)
+        private static IContainer GetDiContainer(CloudOptions options)
         {
-            // Не всё получается сделать дженериками...
-            var boringWordsPreprocessor =
-                new BoringWordsStringsPreprocessor(new HashSet<string> {"be", "a", "the", "in", "to", "that", "alice"});
             var builder = new ContainerBuilder();
-            builder.RegisterGeneric(typeof(CloudCreator<>)).AsSelf();
-            builder.RegisterGeneric(typeof(BasicCloudObjectFabric<>))
-                .As(typeof(ICloudObjectFabric<>));
-            builder.RegisterInstance(new TxtStringsSource(options.InputFile, Encoding.UTF8))
-                .As<IValuesSource<string>>();
-            builder.RegisterInstance(new ToLowerStringsPreprocessor())
-                .As<IValuesPreprocessor<string>>();
-            builder.RegisterInstance(boringWordsPreprocessor)
-                .As<IValuesPreprocessor<string>>();
-            builder.RegisterInstance(new StringLengthPreprocessor(5))
-                .As<IValuesPreprocessor<string>>();
-            // Не может забиндить словарь. Не пойму, почему, есть же пустой конструктор
-//            builder.RegisterGeneric(typeof(Dictionary<,>))
-//                .As(typeof(IDictionary<,>));
-			//TODO RV(atolstov): а зачем ты биндишь Dictionary на IDictionary? Где-то тебе важно абатрагироваться от устройства Dictionary?
-            builder.Register(c => new Dictionary<string, ICloudObject<string>>())
-                .As<IDictionary<string, ICloudObject<string>>>();
-            builder.RegisterGeneric(typeof(CloudObjectsDictionary<>))
+            builder.RegisterType<BasicTagFactory>()
+                .As<ITagFactory>();
+            
+            builder.RegisterInstance(new TxtStringsReader(options.InputFile, Encoding.UTF8))
+                .As<IStringsReader>();
+            
+            builder.RegisterType<StopWordsFilter>()
+                .WithParameter("stopWords", new HashSet<string>(options.StopWords))
+                .As<IFilter>();
+            builder.RegisterType<StringLengthFilter>()
+                .WithParameter("threshold", 5)
+                .As<IFilter>();
+            
+            builder.RegisterType<ToLowerStringsNormalizer>()
+                .As<INormalizer>();
+            builder.RegisterType<WordStemNormalizer>()
+                .WithParameter("hunspell", new Hunspell("en_us.aff", "en_us.dic"))
+                .As<INormalizer>();
+            
+            builder.RegisterType<StringCountStatistic>()
                 .WithParameter("maxCount", options.MaxCount)
-//                .WithParameter("maxWeight", 350)
-                .As(typeof(ICloudObjectContainer<>));
-            builder.RegisterInstance(new SpiralRectanglesLayouter(options.Center))
-                .As<IRectanglesLayouter>();
-            builder.RegisterType<BitmapStringCloudDrawer>()
-                .As<ICloudDrawer<string>>();
-            builder.Register(c => new Bitmap(options.CanvasSize.Width, options.CanvasSize.Height))
-                .As<Image>();
+                .WithParameter("maxWeight", options.MaxWeight)
+                .As<IStatistician>();
+            
             builder.Register(c => new StringsStyler(
                     new Font(options.FontFamily, options.FontEmSize, FontStyle.Regular),
                     1f,
                     options.ColorPalette))
-                .As<ICloudObjectsStyler<string>>();
-            var container = builder.Build();
+                .As<IStyler>();
 
-            return container.Resolve<CloudCreator<string>>();
+            builder.RegisterType<SpiralLayouter>()
+                .WithParameter("center", options.Center)
+                .As<ILayouter>();
 
-// // How does it really look like
-//            var creator = new CloudCreator<string>(
-//                new TxtStringsSource("source.txt", Encoding.UTF8),
-//                new IValuesPreprocessor<string>[]
-//                {
-//                    new StringLengthPreprocessor(5),
-//                    new ToLowerStringsPreprocessor(),
-//                    new BoringWordsStringsPreprocessor(
-//                        new HashSet<string>
-//                        {
-//                            "to",
-//                            "be",
-//                            "a",
-//                            "an",
-//                            "the",
-//                            "and",
-//                            "of",
-//                            "i",
-//                            "my",
-//                            "that",
-//                            "this",
-//                            "thou"
-//                        }
-//                    )
-//                },
-//                new CloudObjectsDictionary<string>(
-//                    new Dictionary<string, ICloudObject<string>>(),
-//                    new BasicCloudObjectFabric<string>(), 100, 350),
-//                new SpiralRectanglesLayouter(new Point(2500, 2500)),
-//                new BitmapStringCloudDrawer(new Bitmap(5000, 5000),
-//                    new StringsStyler(
-//                        new Font(FontFamily.GenericSansSerif, 50, FontStyle.Regular),
-//                        2f,
-//                        new Pen(Color.Chocolate),
-//                        new[]
-//                        {
-//                            Color.CornflowerBlue, Color.BlueViolet, Color.IndianRed, Color.OliveDrab, Color.CadetBlue
-//                        }))
-//            );
+            builder.Register(c => new BitmapRenderer(new Bitmap(options.CanvasSize.Width, options.CanvasSize.Height)))
+                .As<IRenderer<Bitmap>>();
+
+            return builder.Build();
         }
     }
 }

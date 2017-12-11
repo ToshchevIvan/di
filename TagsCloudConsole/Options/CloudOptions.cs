@@ -17,9 +17,12 @@ namespace TagsCloudConsole.Options
         public float FontEmSize { get; }
         public FontFamily FontFamily { get; }
         public int MaxCount { get; }
+        public int MaxWeight { get; }
+        public string[] StopWords { get; }
 
         public CloudOptions(string inputFile, string outputFile, InputFormat inputFormat, ImageFormat outputFormat, 
-            Point center, Size canvasSize, IEnumerable<Color> colorPalette, float fontEmSize, FontFamily fontFamily, int maxCount)
+            Point center, Size canvasSize, IEnumerable<Color> colorPalette, float fontEmSize, FontFamily fontFamily, 
+            int maxCount, int maxWeight, string[] stopWords)
         {
             InputFile = inputFile;
             OutputFile = outputFile;
@@ -31,6 +34,8 @@ namespace TagsCloudConsole.Options
             FontEmSize = fontEmSize;
             FontFamily = fontFamily;
             MaxCount = maxCount;
+            MaxWeight = maxWeight;
+            StopWords = stopWords;
         }
     }
 }
