@@ -4,7 +4,7 @@ using TagsCloudContainer.Stylers;
 
 namespace TagsCloudContainer.CloudObjects
 {
-	//TODO RV(atolstov): не стоит делать настолько абстрактные интерфейсы. Почему ICloudObject не может быть ITag, знающим свою строку, цвет, вес
+	//TODO RV(atolstov): опять же, зачем вводить интерфейс ITag? Ты собираешься менять логику его работы в дальнейшем? 
     public interface ITag
     {
         string Value { get; }
