@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 
@@ -12,10 +14,10 @@ namespace TagsCloudContainer.StringsReaders
                 throw new ArgumentException();
         }
 
-        protected override bool ProcessLine(string line, out string newLine)
+        protected override IEnumerable<string> ProcessLines(IEnumerable<string> lines)
         {
-            newLine = line?.Trim();
-            return !string.IsNullOrEmpty(line);
+            return lines.Select(line => line?.Trim())
+                .Where(line => !string.IsNullOrEmpty(line));
         }
     }
 }

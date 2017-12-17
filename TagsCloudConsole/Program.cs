@@ -10,7 +10,7 @@ using Autofac;
 using CommandLine;
 using NHunspell;
 using TagsCloudConsole.Options;
-using TagsCloudContainer.CloudObjects;
+using TagsCloudContainer;
 using TagsCloudContainer.Filters;
 using TagsCloudContainer.Layouters;
 using TagsCloudContainer.Normalizers;
@@ -18,6 +18,7 @@ using TagsCloudContainer.Renderers;
 using TagsCloudContainer.Statisticians;
 using TagsCloudContainer.StringsReaders;
 using TagsCloudContainer.Stylers;
+using TagsCloudContainer.Tags;
 
 
 namespace TagsCloudConsole
@@ -39,11 +40,10 @@ namespace TagsCloudConsole
             {
                 Color.CornflowerBlue, Color.BlueViolet, Color.IndianRed, Color.OliveDrab, Color.CadetBlue
             };
-            
+
             string[] stopWords;
-            stopWords = cmdOptions.StopWordsFile != null ? 
-                File.ReadAllLines(cmdOptions.StopWordsFile) : new string[0];    
-            
+            stopWords = cmdOptions.StopWordsFile != null ? File.ReadAllLines(cmdOptions.StopWordsFile) : new string[0];
+
             var options = new CloudOptions(
                 cmdOptions.InputFile,
                 cmdOptions.OutputFile,
@@ -64,24 +64,33 @@ namespace TagsCloudConsole
 
         private static void RunProgram(IContainer di, CloudOptions options)
         {
-            var strings = di.Resolve<IStringsReader>().ReadStrings();
-            var normalized = di.Resolve<IEnumerable<INormalizer>>()
-                .Aggregate(strings, (current, normalizer) => normalizer.Normalize(current));
-            var filtered = di.Resolve<IEnumerable<IFilter>>()
-                .Aggregate(normalized, (current, filter) => filter.Filter(current));
-            IDictionary<string, int> statistics = di.Resolve<IStatistician>()
-                .GetStatistic(filtered)
-                .OrderByDescending(x => x.Value)
-                .Take(options.MaxCount)
-                .ToDictionary(x => x.Key, x => x.Value);
-            var styled = di.Resolve<IStyler>()
-                .GetStyles(statistics);
-            var layout = di.Resolve<ILayouter>()
-                .GetLayout(styled);
-            Bitmap bitmap;
-            using (var renderer = di.Resolve<IRenderer<Bitmap>>())
-                bitmap = renderer.Render(layout);
-            bitmap.Save(options.OutputFile, options.OutputFormat);
+            var result = di.Resolve<IStringsReader>()
+                .ReadStrings()
+                .Then(strings =>
+                    di.Resolve<IEnumerable<INormalizer>>()
+                        .Aggregate(strings, (current, normalizer) => normalizer.Normalize(current)
+                            .GetValueOrThrow())
+                )
+                .Then(normalized =>
+                    di.Resolve<IEnumerable<IFilter>>()
+                        .Aggregate(normalized, (current, filter) => filter.Filter(current)
+                            .GetValueOrThrow())
+                )
+                .Then(di.Resolve<IStatistician>().GetStatistic)
+                .Then(stats => stats.OrderByDescending(x => x.Value)
+                    .Take(options.MaxCount)
+                    .ToDictionary(x => x.Key, x => x.Value))
+                .Then(di.Resolve<IStyler>().GetStyles)
+                .Then(di.Resolve<ILayouter>().GetLayout)
+                .Then(layout =>
+                {
+                    using (var renderer = di.Resolve<IRenderer<Bitmap>>())
+                        return renderer.Render(layout);
+                })
+                .RefineError("Can't create tag cloud")
+                .GetValueOrThrow();
+            
+            result.Save(options.OutputFile, options.OutputFormat);
         }
 
         private static IContainer GetDiContainer(CloudOptions options)
@@ -89,28 +98,29 @@ namespace TagsCloudConsole
             var builder = new ContainerBuilder();
             builder.RegisterType<BasicTagFactory>()
                 .As<ITagFactory>();
-            
+
             builder.RegisterInstance(new TxtStringsReader(options.InputFile, Encoding.UTF8))
                 .As<IStringsReader>();
-            
+
             builder.RegisterType<StopWordsFilter>()
                 .WithParameter("stopWords", new HashSet<string>(options.StopWords))
                 .As<IFilter>();
             builder.RegisterType<StringLengthFilter>()
                 .WithParameter("threshold", 5)
                 .As<IFilter>();
-            
+
             builder.RegisterType<ToLowerStringsNormalizer>()
                 .As<INormalizer>();
             builder.RegisterType<WordStemNormalizer>()
-                .WithParameter("hunspell", new Hunspell("en_us.aff", "en_us.dic"))
+                .WithParameter("affFile", "en_us.aff")
+                .WithParameter("dictFile", "en_us.dic")
                 .As<INormalizer>();
-            
+
             builder.RegisterType<StringCountStatistic>()
                 .WithParameter("maxCount", options.MaxCount)
                 .WithParameter("maxWeight", options.MaxWeight)
                 .As<IStatistician>();
-            
+
             builder.Register(c => new StringsStyler(
                     new Font(options.FontFamily, options.FontEmSize, FontStyle.Regular),
                     1f,
@@ -126,13 +136,13 @@ namespace TagsCloudConsole
 
             return builder.Build();
         }
-        
+
         private static ImageFormat GetImageFormat(OutputFormat format)
         {
             const BindingFlags flags = BindingFlags.GetProperty;
             var type = typeof(ImageFormat);
             var o = type.InvokeMember(format.ToString(), flags, null, type, null);
-            return (ImageFormat)o;
+            return (ImageFormat) o;
         }
     }
 }

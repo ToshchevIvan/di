@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using TagsCloudContainer.CloudObjects;
+using TagsCloudContainer.Tags;
 
 
 namespace TagsCloudContainer.Renderers
 {
-    public interface IRenderer<out TResult> : IDisposable
+    public interface IRenderer<TResult> : IDisposable
     {
-        TResult Render(IEnumerable<ITag> tags);
+        Result<TResult> Render(IEnumerable<ITag> tags);
     }
 }

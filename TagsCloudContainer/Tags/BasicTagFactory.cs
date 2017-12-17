@@ -2,7 +2,7 @@
 using TagsCloudContainer.Stylers;
 
 
-namespace TagsCloudContainer.CloudObjects
+namespace TagsCloudContainer.Tags
 {
 	//TODO RV(atolstov): паттерн называется Factory а не Fabric
 	public class BasicTagFactory : ITagFactory

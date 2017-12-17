@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Autofac;    
+using Autofac;
 using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
-using TagsCloudContainer.CloudObjects;
+using TagsCloudContainer;
 using TagsCloudContainer.Layouters;
 using TagsCloudContainer.Statisticians;
 using TagsCloudContainer.Stylers;
+using TagsCloudContainer.Tags;
 
 
 namespace TagsCloudTests
@@ -32,14 +33,16 @@ namespace TagsCloudTests
             currentLayout = new List<ITag>();
             styler = Substitute.For<IStyler>();
             styler.GetStyles(Arg.Any<IDictionary<string, int>>())
-                .Returns(RandomEntitiesFactory.GetRandomStyledStrings(TagsCount));
+                .Returns(RandomEntitiesFactory
+                    .GetRandomStyledStrings(TagsCount)
+                    .AsResult());
         }
-        
+
         private static IContainer GetDiContainer()
         {
             var builder = new ContainerBuilder();
             builder.RegisterType<BasicTagFactory>()
-                .As<ITagFactory>();           
+                .As<ITagFactory>();
             builder.RegisterType<StringCountStatistic>()
                 .As<IStatistician>();
             return builder.Build();
@@ -59,7 +62,9 @@ namespace TagsCloudTests
             var center = new Point(CanvasSideLength / 2, CanvasSideLength / 2);
             var layouter = new SpiralLayouter(center, di.Resolve<ITagFactory>());
 
-            var firstTag = layouter.GetLayout(styler.GetStyles(Arg.Any<IDictionary<string, int>>()))
+            var firstTag = styler.GetStyles(Arg.Any<IDictionary<string, int>>())
+                .Then(layouter.GetLayout)
+                .GetValueOrThrow()
                 .First();
             currentLayout.Add(firstTag);
 
@@ -110,8 +115,9 @@ namespace TagsCloudTests
 
         private List<ITag> GetLayout()
         {
-            return layouter.GetLayout(
-                styler.GetStyles(Arg.Any<IDictionary<string, int>>()))
+            return styler.GetStyles(Arg.Any<IDictionary<string, int>>())
+                .Then(layouter.GetLayout)
+                .GetValueOrThrow()
                 .ToList();
         }
     }

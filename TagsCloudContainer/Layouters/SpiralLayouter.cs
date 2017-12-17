@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TagsCloudContainer.CloudObjects;
 using TagsCloudContainer.Stylers;
+using TagsCloudContainer.Tags;
 
 
 namespace TagsCloudContainer.Layouters
@@ -26,13 +26,13 @@ namespace TagsCloudContainer.Layouters
             spiral = GenerateSpiral(center);
         }
         
-        public IEnumerable<ITag> GetLayout(IDictionary<string, Style> styledStrings)
+        public Result<IEnumerable<ITag>> GetLayout(IDictionary<string, Style> styledStrings)
         {
-            foreach (var item in styledStrings)
+            return styledStrings.Select(item =>
             {
                 var location = PutNextRectangle(item.Value.Size).Location;
-                yield return tagFactory.Create(item.Key, item.Value, location);
-            }
+                return tagFactory.Create(item.Key, item.Value, location);
+            }).AsResult();
         }
 
         private Rectangle PutNextRectangle(Size rectangleSize)

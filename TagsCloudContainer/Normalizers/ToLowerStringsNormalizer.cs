@@ -6,9 +6,9 @@ namespace TagsCloudContainer.Normalizers
 {
     public class ToLowerStringsNormalizer : INormalizer
     {
-        public IEnumerable<string> Normalize(IEnumerable<string> values)
+        public Result<IEnumerable<string>> Normalize(IEnumerable<string> values)
         {
-            return values.Select(v => v?.ToLowerInvariant());
+            return Result.Of(() => values.Select(v => v?.ToLowerInvariant()));
         }
     }
 }

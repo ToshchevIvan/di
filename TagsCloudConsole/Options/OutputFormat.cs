@@ -1,7 +1,4 @@
-﻿using System.Drawing.Imaging;
-
-
-namespace TagsCloudConsole.Options
+﻿namespace TagsCloudConsole.Options
 {
     public enum OutputFormat
     {

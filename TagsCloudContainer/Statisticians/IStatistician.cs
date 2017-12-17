@@ -5,6 +5,6 @@ namespace TagsCloudContainer.Statisticians
 {
     public interface IStatistician
     {
-        IDictionary<string, int> GetStatistic(IEnumerable<string> values);
+        Result<IDictionary<string, int>> GetStatistic(IEnumerable<string> values);
     }
 }

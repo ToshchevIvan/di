@@ -8,17 +8,21 @@ namespace TagsCloudContainer.Normalizers
 {
     public class WordStemNormalizer : INormalizer
     {
-        private readonly Hunspell hunspell;
+        private readonly string affFile;
+        private readonly string dictFile;
 
-        public WordStemNormalizer(Hunspell hunspell)
+        public WordStemNormalizer(string affFile, string dictFile)
         {
-            this.hunspell = hunspell;
+            this.affFile = affFile;
+            this.dictFile = dictFile;
         }
-        
-        public IEnumerable<string> Normalize(IEnumerable<string> values)
+
+        public Result<IEnumerable<string>> Normalize(IEnumerable<string> values)
         {
-            return values.Select(hunspell.Stem)
-                .SelectMany(stems => stems);
+            return Result.Of(() => new Hunspell(affFile, dictFile))
+                .RefineError("Hunspell failed to load dictionaries")
+                .Then(hunspell => values.Select(hunspell.Stem)
+                    .SelectMany(stems => stems));
         }
     }
 }

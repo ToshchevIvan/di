@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TagsCloudContainer.CloudObjects;
 
 
 namespace TagsCloudContainer.Stylers
@@ -21,7 +21,7 @@ namespace TagsCloudContainer.Stylers
             graphics = Graphics.FromImage(new Bitmap(1, 1));
         }
 
-        public IDictionary<string, Style> GetStyles(IDictionary<string, int> weightedStrings)
+        public Result<IDictionary<string, Style>> GetStyles(IDictionary<string, int> weightedStrings)
         {
             var styles = new Dictionary<string, Style>();
             foreach (var item in weightedStrings)

@@ -2,7 +2,7 @@
 using TagsCloudContainer.Stylers;
 
 
-namespace TagsCloudContainer.CloudObjects
+namespace TagsCloudContainer.Tags
 {
     public class BasicTag : ITag
     {

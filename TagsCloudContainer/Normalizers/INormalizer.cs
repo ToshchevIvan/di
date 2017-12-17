@@ -5,6 +5,6 @@ namespace TagsCloudContainer.Normalizers
 {
     public interface INormalizer
     {
-        IEnumerable<string> Normalize(IEnumerable<string> values);
+        Result<IEnumerable<string>> Normalize(IEnumerable<string> values);
     }
 }

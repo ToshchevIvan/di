@@ -14,9 +14,9 @@ namespace TagsCloudContainer.Filters
             this.filterFunc = filterFunc;
         }
         
-        public IEnumerable<string> Filter(IEnumerable<string> values)
+        public Result<IEnumerable<string>> Filter(IEnumerable<string> values)
         {
-            return values.Where(filterFunc);
+            return Result.Of(() => values.Where(filterFunc));
         }
     }
 }

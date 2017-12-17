@@ -6,18 +6,14 @@ namespace TagsCloudContainer.Statisticians
 {
     public class StringCountStatistic : IStatistician
     {
-        private int maxWeight = int.MaxValue;
+        private readonly int maxWeight;
 
-        public StringCountStatistic()
-        {
-        }
-
-        public StringCountStatistic(int maxWeight)
+        public StringCountStatistic(int maxWeight = int.MaxValue)
         {
             this.maxWeight = maxWeight;
         }
 
-        public IDictionary<string, int> GetStatistic(IEnumerable<string> values)
+        public Result<IDictionary<string, int>> GetStatistic(IEnumerable<string> values)
         {
             var stats = new Dictionary<string, int>();
             foreach (var value in values)

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using TagsCloudContainer.CloudObjects;
 using TagsCloudContainer.Layouters;
 using TagsCloudContainer.Stylers;
+using TagsCloudContainer.Tags;
 
 
 namespace TagsCloudTests

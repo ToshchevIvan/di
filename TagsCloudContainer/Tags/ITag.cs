@@ -2,7 +2,7 @@
 using TagsCloudContainer.Stylers;
 
 
-namespace TagsCloudContainer.CloudObjects
+namespace TagsCloudContainer.Tags
 {
 	//TODO RV(atolstov): не стоит делать настолько абстрактные интерфейсы. Почему ICloudObject не может быть ITag, знающим свою строку, цвет, вес
     public interface ITag
