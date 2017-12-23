@@ -26,13 +26,13 @@ namespace TagsCloudContainer.Layouters
             spiral = GenerateSpiral(center);
         }
         
-        public Result<IEnumerable<ITag>> GetLayout(IDictionary<string, Style> styledStrings)
+        public IEnumerable<ITag> GetLayout(IDictionary<string, Style> styledStrings)
         {
             return styledStrings.Select(item =>
             {
                 var location = PutNextRectangle(item.Value.Size).Location;
                 return tagFactory.Create(item.Key, item.Value, location);
-            }).AsResult();
+            });
         }
 
         private Rectangle PutNextRectangle(Size rectangleSize)

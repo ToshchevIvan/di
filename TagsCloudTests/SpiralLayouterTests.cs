@@ -35,7 +35,7 @@ namespace TagsCloudTests
             styler.GetStyles(Arg.Any<IDictionary<string, int>>())
                 .Returns(RandomEntitiesFactory
                     .GetRandomStyledStrings(TagsCount)
-                    .AsResult());
+                    );
         }
 
         private static IContainer GetDiContainer()
@@ -62,9 +62,7 @@ namespace TagsCloudTests
             var center = new Point(CanvasSideLength / 2, CanvasSideLength / 2);
             var layouter = new SpiralLayouter(center, di.Resolve<ITagFactory>());
 
-            var firstTag = styler.GetStyles(Arg.Any<IDictionary<string, int>>())
-                .Then(layouter.GetLayout)
-                .GetValueOrThrow()
+            var firstTag = layouter.GetLayout(styler.GetStyles(Arg.Any<IDictionary<string, int>>()))
                 .First();
             currentLayout.Add(firstTag);
 
@@ -115,9 +113,7 @@ namespace TagsCloudTests
 
         private List<ITag> GetLayout()
         {
-            return styler.GetStyles(Arg.Any<IDictionary<string, int>>())
-                .Then(layouter.GetLayout)
-                .GetValueOrThrow()
+            return layouter.GetLayout(styler.GetStyles(Arg.Any<IDictionary<string, int>>()))
                 .ToList();
         }
     }

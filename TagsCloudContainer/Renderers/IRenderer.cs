@@ -9,6 +9,6 @@ namespace TagsCloudContainer.Renderers
 {
     public interface IRenderer<TResult> : IDisposable
     {
-        Result<TResult> Render(IEnumerable<ITag> tags);
+        TResult Render(IEnumerable<ITag> tags);
     }
 }

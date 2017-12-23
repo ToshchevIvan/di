@@ -21,7 +21,7 @@ namespace TagsCloudContainer.Stylers
             graphics = Graphics.FromImage(new Bitmap(1, 1));
         }
 
-        public Result<IDictionary<string, Style>> GetStyles(IDictionary<string, int> weightedStrings)
+        public IDictionary<string, Style> GetStyles(IDictionary<string, int> weightedStrings)
         {
             var styles = new Dictionary<string, Style>();
             foreach (var item in weightedStrings)

@@ -17,12 +17,13 @@ namespace TagsCloudContainer.Normalizers
             this.dictFile = dictFile;
         }
 
-        public Result<IEnumerable<string>> Normalize(IEnumerable<string> values)
+        public IEnumerable<string> Normalize(IEnumerable<string> values)
         {
             return Result.Of(() => new Hunspell(affFile, dictFile))
-                .RefineError("Hunspell failed to load dictionaries")
+                .RefineError("Hunspell failed to load its dictionaries")
                 .Then(hunspell => values.Select(hunspell.Stem)
-                    .SelectMany(stems => stems));
+                    .SelectMany(stems => stems))
+                .GetValueOrThrow();
         }
     }
 }

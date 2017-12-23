@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 
 namespace TagsCloudContainer.Statisticians
@@ -13,7 +14,7 @@ namespace TagsCloudContainer.Statisticians
             this.maxWeight = maxWeight;
         }
 
-        public Result<IDictionary<string, int>> GetStatistic(IEnumerable<string> values)
+        public IDictionary<string, int> GetStatistic(IEnumerable<string> values)
         {
             var stats = new Dictionary<string, int>();
             foreach (var value in values)

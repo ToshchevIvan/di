@@ -6,6 +6,6 @@ namespace TagsCloudContainer.StringsReaders
 {
     public interface IStringsReader
     {
-        Result<IEnumerable<string>> ReadStrings();
+        IEnumerable<string> ReadStrings();
     }
 }

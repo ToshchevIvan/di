@@ -7,6 +7,6 @@ namespace TagsCloudContainer.Layouters
 {
     public interface ILayouter
     {
-        Result<IEnumerable<ITag>> GetLayout(IDictionary<string, Style> styledStrings);
+        IEnumerable<ITag> GetLayout(IDictionary<string, Style> styledStrings);
     }
 }

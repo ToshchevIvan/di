@@ -64,33 +64,47 @@ namespace TagsCloudConsole
 
         private static void RunProgram(IContainer di, CloudOptions options)
         {
-            var result = di.Resolve<IStringsReader>()
-                .ReadStrings()
+            var result = Result.Of(() => di.Resolve<IStringsReader>().ReadStrings(), "Can't read input")
                 .Then(strings =>
                     di.Resolve<IEnumerable<INormalizer>>()
                         .Aggregate(strings, (current, normalizer) => normalizer.Normalize(current)
-                            .GetValueOrThrow())
+                        ),
+                    "Can't filter strings"
                 )
                 .Then(normalized =>
-                    di.Resolve<IEnumerable<IFilter>>()
-                        .Aggregate(normalized, (current, filter) => filter.Filter(current)
-                            .GetValueOrThrow())
+                        di.Resolve<IEnumerable<IFilter>>()
+                            .Aggregate(normalized, (current, filter) => filter.Filter(current)
+                            ),
+                    "Can't normalize strings"
                 )
-                .Then(di.Resolve<IStatistician>().GetStatistic)
-                .Then(stats => stats.OrderByDescending(x => x.Value)
-                    .Take(options.MaxCount)
-                    .ToDictionary(x => x.Key, x => x.Value))
-                .Then(di.Resolve<IStyler>().GetStyles)
-                .Then(di.Resolve<ILayouter>().GetLayout)
-                .Then(layout =>
-                {
-                    using (var renderer = di.Resolve<IRenderer<Bitmap>>())
-                        return renderer.Render(layout);
-                })
-                .RefineError("Can't create tag cloud")
-                .GetValueOrThrow();
-            
-            result.Save(options.OutputFile, options.OutputFormat);
+                .Then(di.Resolve<IStatistician>().GetStatistic, "Can't get statistics")
+                .Then(stats => GetOrderedStatistics(stats, options.MaxCount))
+                .Then(di.Resolve<IStyler>().GetStyles, "Can't generate styles")
+                .Then(di.Resolve<ILayouter>().GetLayout, "Can't make layout")
+                .Then(layout => RenderCloud(layout, di), "Can't render tag cloud")
+                .Then(image => image.Save(options.OutputFile, options.OutputFormat), "Can't save image")
+                .RefineError("Failed to create cloud");
+            try
+            {
+                result.GetValueOrThrow();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private static IDictionary<string, int> GetOrderedStatistics(IDictionary<string, int> stats, int count)
+        {
+            return stats.OrderByDescending(x => x.Value)
+                .Take(count)
+                .ToDictionary(x => x.Key, x => x.Value);
+        }
+
+        private static Bitmap RenderCloud(IEnumerable<ITag> layout, IContainer di)
+        {
+            using (var renderer = di.Resolve<IRenderer<Bitmap>>())
+                return renderer.Render(layout);
         }
 
         private static IContainer GetDiContainer(CloudOptions options)

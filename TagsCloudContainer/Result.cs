@@ -65,7 +65,8 @@ namespace TagsCloudContainer
             }
             catch (Exception e)
             {
-                return Fail<T>(error ?? e.Message);
+                return Fail<T>(e.Message)
+                    .RefineError(error);
             }
         }
 
@@ -78,22 +79,25 @@ namespace TagsCloudContainer
             }
             catch (Exception e)
             {
-                return Fail<None>(error ?? e.Message);
+                return Fail<None>(e.Message)
+                    .RefineError(error);
             }
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
             this Result<TInput> input,
-            Func<TInput, TOutput> continuation)
+            Func<TInput, TOutput> continuation,
+            string error = null)
         {
-            return input.Then(inp => Of(() => continuation(inp)));
+            return input.Then(inp => Of(() => continuation(inp), error));
         }
 
         public static Result<None> Then<TInput>(
             this Result<TInput> input,
-            Action<TInput> continuation)
+            Action<TInput> continuation,
+            string error = null)
         {
-            return input.Then(inp => OfAction(() => continuation(inp)));
+            return input.Then(inp => OfAction(() => continuation(inp), error));
         }
 
         public static Result<TOutput> Then<TInput, TOutput>(
@@ -125,23 +129,9 @@ namespace TagsCloudContainer
             this Result<TInput> input,
             string errorMessage)
         {
+            if (errorMessage == null)
+                return input;
             return input.ReplaceError(err => errorMessage + ". " + err);
-        }
-
-        public static Result<TOutput> SelectMany<TInput, TOutput>(
-            this Result<TInput> input,
-            Func<TInput, Result<TOutput>> continuation)
-        {
-            return input.Then(continuation);
-        }
-
-        public static Result<TSelected> SelectMany<TInput, TOutput, TSelected>(
-            this Result<TInput> input,
-            Func<TInput, Result<TOutput>> continuation,
-            Func<TInput, TOutput, TSelected> resultSelector)
-        {
-            return input.Then(continuation)
-                .Then(o => resultSelector(input.Value, o));
         }
     }
 }

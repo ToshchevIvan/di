@@ -5,6 +5,6 @@ namespace TagsCloudContainer.Stylers
 {
     public interface IStyler
     {
-        Result<IDictionary<string, Style>> GetStyles(IDictionary<string, int> weightedStrings);
+        IDictionary<string, Style> GetStyles(IDictionary<string, int> weightedStrings);
     }
 }

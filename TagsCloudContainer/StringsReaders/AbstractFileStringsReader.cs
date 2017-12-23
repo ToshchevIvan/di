@@ -18,11 +18,9 @@ namespace TagsCloudContainer.StringsReaders
             this.encoding = encoding;
         }
         
-        public Result<IEnumerable<string>> ReadStrings()
+        public IEnumerable<string> ReadStrings()
         {
-            return Result.Of(() => File.ReadLines(pathToFile, encoding))
-                .Then(ProcessLines)
-                .RefineError("Can't read input");
+            return ProcessLines(File.ReadLines(pathToFile, encoding));
         }
         
         protected abstract IEnumerable<string> ProcessLines(IEnumerable<string> lines);
